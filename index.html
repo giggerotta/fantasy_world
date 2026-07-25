@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Website</title>
+	<link rel="stylesheet" href="styles.css">
+	<link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Fantasy World</div>
+        <ul class="menu">
+            <li><a href="#" class="active" onclick="showSection('home', this)">Home</a></li>
+            <li><a href="#" onclick="showSection('about', this)">About</a></li>
+            <li><a href="#" onclick="showSection('gallery-section', this)">Gallery</a></li>
+            <li><a href="#" onclick="showSection('contact', this)">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home">
+        <div class="hero">
+            <h1 class="logo">Welcome to Fantasy World</h1>
+            <p>We build amazing digital experiences</p>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about" class="content">
+        <h2>About Us</h2>
+        <p>To be added...</p>
+        
+    </div>
+
+    
+    <!-- Gallery Section -->
+    <div id="gallery-section" class="content">
+    <h2>Our Gallery</h2>
+
+    <div class="gallery-tabs" align="center">
+    <a href="#" class="gallery-tab active"
+       onclick="selectCategory('fantasy', this); return false;">
+       Fantasy
+    </a>
+
+    <a href="#" class="gallery-tab"
+       onclick="selectCategory('myths', this); return false;">
+       Myths
+    </a>
+
+    <a href="#" class="gallery-tab"
+       onclick="selectCategory('fairy', this); return false;">
+       Fairy Tales
+    </a>
+</div>
+
+    <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<!-- Contact Section -->
+    <div id="contact" class="content">
+        <h2>Contact Us</h2>
+        <p>Have a project in mind? We'd love to hear from you!</p>
+        <div class="contact-form">
+            <input type="text" placeholder="Your Name" />
+            <input type="email" placeholder="Your Email" />
+            <input type="text" placeholder="Subject" />
+            <textarea placeholder="Your Message"></textarea>
+            <button>Send Message ✉️</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 Fantasy World. All rights reserved. | Built with ❤️</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+        <span class="lightbox-prev" onclick="changeImage(-1)">&#10094;</span>
+        <img id="lightbox-img" src="" alt="Gallery Image" />
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+        <span class="lightbox-next" onclick="changeImage(1)">&#10095;</span>
+    </div>
+
+    <script>
+const galleryCategories = {
+    fantasy: [
+        { src: "Gallery/Mermaid vs Girl.png", caption: "Mermaid vs Girl" },
+        { src: "Gallery/Flying City.png", caption: "Flying City" },
+        { src: "Gallery/Mermaid.png", caption: "Mermaid" },
+        { src: "Gallery/Snake Tower.png", caption: "Snake Tower" }
+        
+    ],
+
+    myths: [
+        
+        { src: "Gallery/The Battle with the Minotaur.png", caption: "The Battle with the Minotaur" },
+        { src: "Gallery/The Gorgon Medusa.png", caption: "The Gorgon Medusa" },
+        { src: "Gallery/Zeus vs Typhon.png", caption: "Zeus vs Typhon" }
+    ],
+
+    fairy: [
+		{ src: "Gallery/Family Cart.png", caption: "Family Cart" },
+        { src: "Gallery/The Fairy from the Sugar Bowl.png", caption: "The Fairy from the Sugar Bowl" },
+        { src: "Gallery/The Two Little Billy Goats.png", caption: "The Two Little Billy Goats" },
+		{ src: "Gallery/The Home of Fairies.png", caption: "The Home of Fairies" }
+    ]
+};
+
+let currentCategory = "fantasy";
+let currentImages = galleryCategories[currentCategory];
+let currentImageIndex = 0;
+
+function selectCategory(category, button) {
+
+    currentCategory = category;
+    currentImages = galleryCategories[category];
+
+    document.querySelectorAll(".gallery-tab").forEach(tab=>{
+        tab.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    buildGallery();
+}
+
+function buildGallery() {
+
+    const grid = document.getElementById("gallery-grid");
+    grid.innerHTML = "";
+
+    currentImages.forEach((image,index)=>{
+
+        const item = document.createElement("div");
+
+        item.className="gallery-item";
+
+        item.innerHTML=`
+            <img src="${image.src}" alt="${image.caption}"
+            onerror="this.parentElement.style.display='none'">
+
+            <div class="overlay">${image.caption}</div>
+        `;
+
+        item.onclick=()=>openLightbox(index);
+
+        grid.appendChild(item);
+
+    });
+
+}
+
+function openLightbox(index){
+
+    currentImageIndex=index;
+
+    document.getElementById("lightbox-img").src=currentImages[index].src;
+    document.getElementById("lightbox-caption").textContent=currentImages[index].caption;
+
+    document.getElementById("lightbox").classList.add("open");
+
+    document.body.style.overflow="hidden";
+
+}
+
+function changeImage(direction){
+
+    currentImageIndex=(currentImageIndex+direction+currentImages.length)%currentImages.length;
+
+    document.getElementById("lightbox-img").src=currentImages[currentImageIndex].src;
+    document.getElementById("lightbox-caption").textContent=currentImages[currentImageIndex].caption;
+
+}
+
+function closeLightbox(){
+
+    document.getElementById("lightbox").classList.remove("open");
+    document.body.style.overflow="";
+
+}
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+});
+
+document.addEventListener('keydown', function(e) {
+
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+
+    if (e.key === 'ArrowRight') changeImage(1);
+    if (e.key === 'ArrowLeft') changeImage(-1);
+    if (e.key === 'Escape') closeLightbox();
+
+});
+
+function showSection(sectionId, clickedLink) {
+
+    document.getElementById('home').style.display='none';
+
+    document.querySelectorAll('.content').forEach(section=>{
+        section.classList.remove('active');
+    });
+
+    document.querySelectorAll('.menu li a').forEach(link=>{
+        link.classList.remove('active');
+    });
+
+    if(sectionId==="home"){
+        document.getElementById('home').style.display='block';
+    }else{
+        document.getElementById(sectionId).classList.add('active');
+    }
+
+    clickedLink.classList.add('active');
+
+    if(sectionId==="gallery-section"){
+        buildGallery();
+    }
+
+}
+
+buildGallery();
+</script>
+
+</body>
+</html>
