@@ -352,3 +352,22 @@
 .gallery-tab.active {
     background-color: var(--color-primary);
 }
+
+/* Styles for submit button */
+.contact-form button,
+.contact-form input[type="submit"] {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.contact-form button:hover,
+.contact-form input[type="submit"]:hover {
+    background-color: var(--color-primary-dk);
+}
